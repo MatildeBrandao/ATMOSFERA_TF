@@ -1,16 +1,16 @@
-:root{--ink:#e8eef0;--dim:#9fb0b6;--line:rgba(232,238,240,.25);--panel:rgba(8,14,22,.62)}
-html,body{height:100%;margin:0;background:#080e16;overflow:hidden;color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif}
+:root{--ink:#1f2a30;--dim:#4d5f67;--line:rgba(31,42,48,.3);--panel:rgba(255,255,255,.6)}
+html,body{height:100%;margin:0;background:#f4eee6;overflow:hidden;color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif}
 canvas{position:fixed;inset:0;display:block;z-index:0}
-body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(to bottom,rgba(8,14,22,.55),transparent 30%,transparent 55%,rgba(8,14,22,.7))}
+body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(to bottom,rgba(244,238,230,.7),transparent 28%,transparent 55%,rgba(244,238,230,.8))}
 .ui{position:fixed;inset:0;z-index:2;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:20px;box-sizing:border-box}
 .ui>*{pointer-events:auto}
 h1{font:300 clamp(28px,5vw,52px)/1 'Fraunces',Georgia,serif;margin:0;letter-spacing:.01em}
 .sub{font:italic 300 16px 'Fraunces',Georgia,serif;color:var(--dim);margin:6px 0 14px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;max-width:560px}
-button{font:inherit;font-size:13px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 14px;cursor:pointer}
-button[aria-pressed=true]{background:var(--ink);color:#080e16;border-color:var(--ink)}
-button:focus-visible{outline:2px solid #7fd6d9;outline-offset:2px}
-.panel{max-width:520px;text-shadow:0 1px 8px rgba(0,0,0,.75),0 0 2px rgba(0,0,0,.6)}
+button{font:inherit;font-size:13px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 14px;cursor:pointer;backdrop-filter:blur(6px)}
+button[aria-pressed=true]{background:var(--ink);color:#f4eee6;border-color:var(--ink)}
+button:focus-visible{outline:2px solid #3d6f8f;outline-offset:2px}
+.panel{max-width:520px;text-shadow:0 0 10px rgba(255,255,255,.9),0 0 3px rgba(255,255,255,.8)}
 .head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .city{font:300 26px 'Fraunces',Georgia,serif}
 .cls{font-size:14px;color:var(--dim)}

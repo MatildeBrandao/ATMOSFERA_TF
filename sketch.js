@@ -13,7 +13,10 @@ const PAL = {
   med:[[250,200,130],[200,212,140],[140,190,205],[226,160,190],[176,168,218]],
   mau:[[62,96,160],[108,84,172],[48,140,172],[36,56,112],[124,146,194]]
 };
-const N = 5500;
+const N = 9000;      // máximo de partículas
+const MIN_N = 6000;  // mínimo de partículas
+const BINS = 64;     // níveis de cor
+const GRAIN = [-34, -12, 12, 34];
 const pts = [];
 let S = 0.2, TS = 0.2, PM = 0.1, TPM = 0.1, t = 0, gen = 0, wipe = 0;
 
@@ -68,8 +71,8 @@ function show(c, time) {
     '<div class="m">' + LBL[k] + '<b>' + fmt(c[k]) + '</b><div class="bar"><i style="width:' +
     Math.min(100, (c[k] || 0) / MAXV[k] * 100) + '%"></i></div></div>').join('');
   $('src').textContent = 'Dados ao vivo · Open-Meteo · índice europeu, µg/m³ · ' + (time || '').replace('T', ' ');
-  TS = Math.min(1, c.aqi / 110);
-  TPM = Math.min(1, (c.pm25 || 0) / 80);
+  TS = Math.min(1, c.aqi / 90);            // escala mais sensível: 90 já é o máximo visual
+  TPM = Math.min(1, (c.pm25 || 0) / 60);
 }
 function escolherLocal(place) {
   document.querySelectorAll('#chips button').forEach(b => b.setAttribute('aria-pressed', b.dataset.n === place.n));
@@ -91,6 +94,7 @@ function buildChips() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   pixelDensity(1);
+  noiseDetail(2, 0.5);
   for (let i = 0; i < N; i++) pts.push({ x: random(width), y: random(height), k: random(.3, 1), h: random() });
   background(244, 238, 230);
   buildChips();
@@ -102,36 +106,48 @@ function curPal() {
   const o = [];
   for (let j = 0; j < 5; j++) {
     let a, b, u;
-    if (S < .5) { a = PAL.bom[j]; b = PAL.med[j]; u = constrain((S - .2) / .3, 0, 1); }
-    else { a = PAL.med[j]; b = PAL.mau[j]; u = constrain((S - .5) / .35, 0, 1); }
+    if (S < .45) { a = PAL.bom[j]; b = PAL.med[j]; u = constrain((S - .15) / .3, 0, 1); }
+    else { a = PAL.med[j]; b = PAL.mau[j]; u = constrain((S - .45) / .35, 0, 1); }
     o.push([a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u]);
   }
   return o;
 }
+function buildStyles(pal) { // cores pré-calculadas: BINS níveis × 4 graus de grão
+  const st = [];
+  for (let b = 0; b < BINS; b++) {
+    const f = b / BINS * 5, k = Math.floor(f) % 5, m = f - Math.floor(f), c0 = pal[k], c1 = pal[(k + 1) % 5];
+    const r = c0[0] + (c1[0] - c0[0]) * m, g = c0[1] + (c1[1] - c0[1]) * m, bl = c0[2] + (c1[2] - c0[2]) * m;
+    for (let q = 0; q < 4; q++) {
+      const o = GRAIN[q];
+      st.push('rgba(' + Math.round(r + o) + ',' + Math.round(g + o) + ',' + Math.round(bl + o) + ',.88)');
+    }
+  }
+  return st;
+}
 function draw() {
   S += (TS - S) * .02; PM += (TPM - PM) * .02; t += .003 + S * .004;
   noStroke();
-  fill(lerp(244, 200, S), lerp(238, 207, S), lerp(230, 222, S), wipe > 0 ? 40 : 4);
+  fill(lerp(244, 200, S), lerp(238, 207, S), lerp(230, 222, S), wipe > 0 ? 40 : 5);
   rect(0, 0, width, height);
   if (wipe > 0) wipe--;
-  const pal = curPal();
+  const styles = buildStyles(curPal());
+  const ctx = drawingContext;
   const ns = 0.0012 + S * 0.008, turb = 1.6 + S * 4.5, spd = 0.5 + S * 2.2;
-  const n = Math.floor(3500 + S * (N - 3500) * (.6 + PM * .4));
+  const n = Math.floor(MIN_N + S * (N - MIN_N) * (.6 + PM * .4));
   for (let i = 0; i < n; i++) {
     const p = pts[i];
-    const a = noise(p.x * ns, p.y * ns, t) * TWO_PI * turb;
-    let vx = cos(a) * spd * p.k, vy = sin(a) * spd * p.k;
+    const nv = noise(p.x * ns, p.y * ns, t);
+    const a = nv * TWO_PI * turb;
+    let vx = Math.cos(a) * spd * p.k, vy = Math.sin(a) * spd * p.k;
     const dx = p.x - mouseX, dy = p.y - mouseY, d2 = dx * dx + dy * dy;
     if (d2 < 14000) { const d = Math.sqrt(d2) + 1, f = (1 - d2 / 14000) * 3; vx += dx / d * f; vy += dy / d * f; }
-    if (S > .55) { vx += random(-1, 1) * (S - .5) * 2; vy += random(-1, 1) * (S - .5) * 2; }
+    if (S > .5) { vx += (Math.random() * 2 - 1) * (S - .45) * 2; vy += (Math.random() * 2 - 1) * (S - .45) * 2; }
     p.x += vx; p.y += vy;
     if (p.x < 0) p.x = width; else if (p.x > width) p.x = 0;
     if (p.y < 0) p.y = height; else if (p.y > height) p.y = 0;
-    let v = noise(p.x * .0025, p.y * .0025, t * .5 + 10) * 1.6 + p.h * .35; v = ((v % 1) + 1) % 1;
-    const f = v * 5, k = Math.floor(f) % 5, m = f - Math.floor(f), c0 = pal[k], c1 = pal[(k + 1) % 5];
-    const g = random(-34, 34);
-    stroke(c0[0] + (c1[0] - c0[0]) * m + g, c0[1] + (c1[1] - c0[1]) * m + g, c0[2] + (c1[2] - c0[2]) * m + g, 225);
-    strokeWeight(1.2 + p.k * 1.1 + S * 1.0);
-    point(p.x, p.y);
+    let v = nv * 1.4 + p.h * .45; v = v - Math.floor(v);
+    ctx.fillStyle = styles[Math.floor(v * BINS) * 4 + (Math.random() * 4 | 0)];
+    const sz = 1.6 + p.k * 1.4 + S;
+    ctx.fillRect(p.x, p.y, sz, sz);
   }
 }
