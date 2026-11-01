@@ -1,5 +1,5 @@
-
 // ATMOSFERA: dados reais de qualidade do ar (Open-Meteo, sem chave) → composição generativa.
+// Ar bom = cores quentes e pastel. Ar mau = cores frias e escuras.
 
 const CITIES = [
   {n:'Lisboa',la:38.72,lo:-9.14},
@@ -9,13 +9,13 @@ const CLS = [[20,'Boa'],[40,'Razoável'],[60,'Moderada'],[80,'Fraca'],[100,'Muit
 const LBL = {pm25:'PM2.5',pm10:'PM10',no2:'NO₂',o3:'O₃',so2:'SO₂'};
 const MAXV = {pm25:120,pm10:200,no2:80,o3:120,so2:20};
 const PAL = {
-  bom:[[120,225,235],[150,200,255],[190,170,255],[160,240,200],[255,190,220]],
-  med:[[250,205,120],[238,150,165],[170,205,120],[242,170,90],[205,160,205]],
-  mau:[[195,50,40],[232,110,40],[125,40,65],[95,62,42],[212,150,70]]
+  bom:[[246,172,168],[250,205,140],[192,215,128],[244,150,108],[200,170,225]],
+  med:[[250,200,130],[200,212,140],[140,190,205],[226,160,190],[176,168,218]],
+  mau:[[62,96,160],[108,84,172],[48,140,172],[36,56,112],[124,146,194]]
 };
-const N = 5000;
+const N = 5500;
 const pts = [];
-let S = 0.2, TS = 0.2, PM = 0.1, TPM = 0.1, t = 0, gen = 0;
+let S = 0.2, TS = 0.2, PM = 0.1, TPM = 0.1, t = 0, gen = 0, wipe = 0;
 
 const $ = id => document.getElementById(id);
 window.addEventListener('error', e => { const el = $('src'); if (el) el.textContent = 'Erro no código: ' + e.message; });
@@ -74,6 +74,7 @@ function show(c, time) {
 function escolherLocal(place) {
   document.querySelectorAll('#chips button').forEach(b => b.setAttribute('aria-pressed', b.dataset.n === place.n));
   $('city').textContent = place.n;
+  wipe = 70; // apaga mais depressa a textura anterior
   loadAir(place);
 }
 function buildChips() {
@@ -91,11 +92,11 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   pixelDensity(1);
   for (let i = 0; i < N; i++) pts.push({ x: random(width), y: random(height), k: random(.3, 1), h: random() });
-  background(8, 14, 22);
+  background(244, 238, 230);
   buildChips();
   escolherLocal(CITIES[0]);
 }
-function windowResized() { resizeCanvas(windowWidth, windowHeight); background(8, 14, 22); }
+function windowResized() { resizeCanvas(windowWidth, windowHeight); background(244, 238, 230); }
 
 function curPal() {
   const o = [];
@@ -110,11 +111,12 @@ function curPal() {
 function draw() {
   S += (TS - S) * .02; PM += (TPM - PM) * .02; t += .003 + S * .004;
   noStroke();
-  fill(lerp(10, 38, S), lerp(16, 20, S), lerp(30, 16, S), 24);
+  fill(lerp(244, 200, S), lerp(238, 207, S), lerp(230, 222, S), wipe > 0 ? 40 : 4);
   rect(0, 0, width, height);
+  if (wipe > 0) wipe--;
   const pal = curPal();
-  const ns = 0.0014 + S * 0.008, turb = 2 + S * 4.5, spd = 0.6 + S * 2.2;
-  const n = Math.floor(1800 + S * (N - 1800) * (.6 + PM * .4));
+  const ns = 0.0012 + S * 0.008, turb = 1.6 + S * 4.5, spd = 0.5 + S * 2.2;
+  const n = Math.floor(3500 + S * (N - 3500) * (.6 + PM * .4));
   for (let i = 0; i < n; i++) {
     const p = pts[i];
     const a = noise(p.x * ns, p.y * ns, t) * TWO_PI * turb;
@@ -127,9 +129,9 @@ function draw() {
     if (p.y < 0) p.y = height; else if (p.y > height) p.y = 0;
     let v = noise(p.x * .0025, p.y * .0025, t * .5 + 10) * 1.6 + p.h * .35; v = ((v % 1) + 1) % 1;
     const f = v * 5, k = Math.floor(f) % 5, m = f - Math.floor(f), c0 = pal[k], c1 = pal[(k + 1) % 5];
-    const g = random(-28, 28);
-    stroke((c0[0] + (c1[0] - c0[0]) * m + g) * .82, (c0[1] + (c1[1] - c0[1]) * m + g) * .82, (c0[2] + (c1[2] - c0[2]) * m + g) * .82, 150);
-    strokeWeight(1.1 + p.k * 1.1 + S * .8);
+    const g = random(-34, 34);
+    stroke(c0[0] + (c1[0] - c0[0]) * m + g, c0[1] + (c1[1] - c0[1]) * m + g, c0[2] + (c1[2] - c0[2]) * m + g, 225);
+    strokeWeight(1.2 + p.k * 1.1 + S * 1.0);
     point(p.x, p.y);
   }
 }
