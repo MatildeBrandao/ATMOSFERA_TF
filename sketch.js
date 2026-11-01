@@ -1,18 +1,19 @@
 // ATMOSFERA: dados reais de qualidade do ar (Open-Meteo, sem chave) → composição generativa.
-// Ar bom = cores quentes e pastel. Ar mau = cores frias e escuras.
+// Bom = rosas. Moderado = laranjas e amarelos. Mau = azuis e vermelhos.
 // Fonte dos dados: Open-Meteo / Copernicus CAMS.
 
 const CITIES = [
   {n:'Lisboa',la:38.72,lo:-9.14},
-  {n:'Nova Iorque',la:40.71,lo:-74.01}
+  {n:'Nova Iorque',la:40.71,lo:-74.01},
+  {n:'Nova Deli',la:28.61,lo:77.21}
 ];
 const CLS = [[20,'Boa'],[40,'Razoável'],[60,'Moderada'],[80,'Fraca'],[100,'Muito fraca'],[1e9,'Extremamente fraca']];
 const LBL = {pm25:'PM2.5',pm10:'PM10',no2:'NO₂',o3:'O₃',so2:'SO₂'};
 const MAXV = {pm25:120,pm10:200,no2:80,o3:120,so2:20};
 const PAL = {
-  bom:[[246,172,168],[250,205,140],[192,215,128],[244,150,108],[200,170,225]],
-  med:[[250,200,130],[200,212,140],[140,190,205],[226,160,190],[176,168,218]],
-  mau:[[62,96,160],[108,84,172],[48,140,172],[36,56,112],[124,146,194]]
+  bom:[[246,172,192],[252,196,210],[238,150,182],[250,214,224],[226,138,172]],   // rosas
+  med:[[250,200,100],[246,160,70],[252,224,130],[240,130,60],[250,184,90]],      // laranjas e amarelos
+  mau:[[40,80,172],[204,40,52],[64,112,204],[150,30,62],[30,52,124]]             // azuis e vermelhos
 };
 const N = 9000;      // máximo de partículas
 const MIN_N = 6000;  // mínimo de partículas
@@ -107,7 +108,7 @@ function setup() {
 function windowResized() { resizeCanvas(windowWidth, windowHeight); background(244, 238, 230); }
 
 function curPal() {
-  const C = constrain((S - .25) / .5, 0, 1); // faixa estreita: quente → frio
+  const C = constrain((S - .25) / .5, 0, 1); // faixa estreita: rosa → laranja/amarelo → azul/vermelho
   const o = [];
   for (let j = 0; j < 5; j++) {
     let a, b, u;
