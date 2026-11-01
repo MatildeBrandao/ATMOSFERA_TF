@@ -107,11 +107,12 @@ function setup() {
 function windowResized() { resizeCanvas(windowWidth, windowHeight); background(244, 238, 230); }
 
 function curPal() {
+  const C = constrain((S - .25) / .5, 0, 1); // faixa estreita: quente → frio
   const o = [];
   for (let j = 0; j < 5; j++) {
     let a, b, u;
-    if (S < .45) { a = PAL.bom[j]; b = PAL.med[j]; u = constrain((S - .15) / .3, 0, 1); }
-    else { a = PAL.med[j]; b = PAL.mau[j]; u = constrain((S - .45) / .35, 0, 1); }
+    if (C < .5) { a = PAL.bom[j]; b = PAL.med[j]; u = C * 2; }
+    else { a = PAL.med[j]; b = PAL.mau[j]; u = (C - .5) * 2; }
     o.push([a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u]);
   }
   return o;
