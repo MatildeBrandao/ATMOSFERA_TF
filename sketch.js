@@ -1,3 +1,4 @@
+
 // ATMOSFERA: dados reais de qualidade do ar (Open-Meteo, sem chave) → composição generativa.
 
 const CITIES = [
@@ -70,7 +71,7 @@ function show(c, time) {
   TS = Math.min(1, c.aqi / 110);
   TPM = Math.min(1, (c.pm25 || 0) / 80);
 }
-function select(place) {
+function escolherLocal(place) {
   document.querySelectorAll('#chips button').forEach(b => b.setAttribute('aria-pressed', b.dataset.n === place.n));
   $('city').textContent = place.n;
   loadAir(place);
@@ -80,7 +81,7 @@ function buildChips() {
   CITIES.forEach(c => {
     const b = document.createElement('button');
     b.textContent = c.n; b.dataset.n = c.n;
-    b.onclick = () => select(c);
+    b.onclick = () => escolherLocal(c);
     el.appendChild(b);
   });
 }
@@ -92,7 +93,7 @@ function setup() {
   for (let i = 0; i < N; i++) pts.push({ x: random(width), y: random(height), k: random(.3, 1), h: random() });
   background(8, 14, 22);
   buildChips();
-  select(CITIES[0]);
+  escolherLocal(CITIES[0]);
 }
 function windowResized() { resizeCanvas(windowWidth, windowHeight); background(8, 14, 22); }
 

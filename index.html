@@ -1,14 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
-<title>Page Title</title>
-<script src="https://cdn.jsdelivr.net/npm/p5@2.3.4/lib/p5.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/p5.sound@0.4.1/dist/p5.sound.min.js"></script>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atmosfera</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <main>
-    </main>
-    <script src="sketch.js"></script>
-  </body>
-</html> 
+  <div class="ui">
+    <div>
+      <h1>Atmosfera</h1>
+      <p class="sub">E se pudéssemos ver o ar que respiramos?</p>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="panel" aria-live="polite">
+      <div class="head"><span class="city" id="city"></span><span class="big" id="aqi"></span></div>
+      <div class="cls" id="cls"></div>
+      <div class="grid" id="grid"></div>
+      <div class="src" id="src"></div>
+    </div>
+  </div>
+  <script src="sketch.js"></script>
+</body>
+</html>
