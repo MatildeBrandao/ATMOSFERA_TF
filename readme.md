@@ -22,7 +22,7 @@ Para fazer o trabalho usei várias ajudas. Sempre que precisei de perceber uma f
 Ainda assim, o projeto tem limitações, a imagem é uma interpretação artística e não uma representação literal das partículas do ar. Os dados vêm de modelos e não de sensores locais, por isso são estimativas. E, por enquanto, o site só tem três cidades (Lisboa, Nova Iorque e Nova Deli), estas cidades foram escolhidas para ter um exemplo local, outro exemplo com mais população e tráfego, e o último exemplo por ser uma cidade com valores da poluição muito problemáticos. Para o site funcionar é preciso internet, para que seja possível obter os dados relacionados a cada cidade.
 
 
-Em conclusão, este trabalho foi um desafio que acabou por me deixar muito motivada e entusiasmada para ver o resultado final, devido à minha dificuldade em ainda perceber certas partes de código, o claude foi uma grande ajuda porque conseguiu explicar-me passo a passo os porquês e os comos.
+Em conclusão, este trabalho foi um desafio que acabou por me deixar muito motivada e entusiasmada para ver o resultado final, e devido à minha dificuldade em ainda perceber certas partes de código, o claude foi uma grande ajuda porque conseguiu explicar-me passo a passo os porquês e os comos.
 
 Matilde Brandão nº2024332
 Turma L.
